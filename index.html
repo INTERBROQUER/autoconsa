@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proyecto Autoconsa Talleres — InterBroquer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Poppins:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #3d7783;
+    --teal-dark: #2c5a63;
+    --orange: #ed7834;
+    --gray: #606060;
+    --gray-light: #9a9a9a;
+    --bg: #ffffff;
+    --card-bg: #ffffff;
+    --line: #e2e2e2;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; font-family:'Poppins',system-ui,-apple-system,sans-serif;
+    background: var(--bg);
+    color:#333333; min-height:100%;
+  }
+
+  header.top {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px clamp(16px,3vw,40px) 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  header.top img { height:34px; display:block; }
+  header.top .titlewrap { text-align:right; }
+  h1.maintitle {
+    margin:0; color:var(--teal); font-weight:600; letter-spacing:.5px;
+    font-size: clamp(24px, 3vw, 34px);
+  }
+  .subtitle { margin:2px 0 0; color: var(--gray-light); font-size:15px; font-weight:400; }
+
+  .layout {
+    display:grid; grid-template-columns: minmax(400px, 500px) 1fr;
+    gap: 24px; padding: 24px clamp(16px,3vw,40px) 40px; align-items:start;
+  }
+  @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+
+  .sidebar .card { padding: 18px 22px; }
+  .sidebar .kpis { gap:10px; }
+  .sidebar .kpi { padding:10px 12px; }
+  .sidebar .kpi .num { font-size:18px; }
+  .sidebar .kpi.wide .num { font-size:19px; }
+  .sidebar table.premises td { padding: 8px 0; }
+  .sidebar select#insurerSelect { font-size:15px; padding:8px 10px; }
+
+  .card {
+    background: var(--card-bg); border:1px solid var(--line); border-radius:4px;
+    padding: 22px 24px; margin-bottom:20px;
+  }
+  .sectiontitle {
+    display:flex; align-items:stretch; gap:12px; margin: 0 0 18px;
+  }
+  .sectiontitle .bar { width:3px; background:var(--orange); border-radius:2px; }
+  .sectiontitle h2 { margin:0; font-size:18px; font-weight:600; color:var(--teal); align-self:center; }
+
+  label.fieldlabel { display:block; font-size:13px; color:var(--gray-light); margin-bottom:5px; }
+  select#insurerSelect {
+    width:100%; padding:10px 12px; font-family:inherit; font-size:17px; font-weight:500;
+    border:1.5px solid var(--teal); border-radius:4px; color:var(--teal-dark); background:var(--card-bg);
+    appearance:none; -webkit-appearance:none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M1 1l6 6 6-6' stroke='%233d7783' stroke-width='1.6' fill='none'/></svg>");
+    background-repeat:no-repeat; background-position: right 12px center;
+  }
+
+  .kpis { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:18px; }
+  .kpi { border:1px solid var(--line); border-radius:4px; padding:12px 14px; }
+  .kpi .num { font-size:20px; font-weight:600; color:var(--teal-dark); line-height:1.15; }
+  .kpi .lbl { font-size:12.5px; color:var(--gray-light); margin-top:3px; }
+  .kpi.wide { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(61,119,131,.07), rgba(237,120,52,.05)); }
+  .kpi.wide .num { color:var(--orange); font-size:22px; }
+  .kpi.wide .numrow { display:flex; gap:18px; flex-wrap:wrap; }
+
+  table.premises { width:100%; border-collapse:collapse; margin-top:4px; table-layout:fixed; }
+  table.premises td { padding:10px 0; font-size:14px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  table.premises td.label { color:#444; width:auto; padding-right:12px; line-height:1.35; }
+  table.premises td.val { text-align:right; width:112px; white-space:nowrap; }
+  table.premises input {
+    width:88px; text-align:right; font-family:inherit; font-size:13.5px; font-weight:500;
+    padding:6px 8px; border:1px solid var(--line); border-radius:3px; color:var(--teal-dark); background:var(--card-bg);
+    box-sizing:border-box;
+  }
+  table.premises input:focus { outline:2px solid var(--orange); outline-offset:1px; }
+  table.premises .unit { display:inline-block; width:14px; text-align:left; padding-left:2px; color:#444; font-size:13px; }
+  table.premises .derived { font-weight:600; color:var(--orange); font-size:14.5px; }
+
+  table.datatable { width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.datatable th {
+    text-align:right; font-weight:600; color:#fff; background:var(--teal);
+    padding:8px 8px; font-size:12.5px; letter-spacing:.2px;
+  }
+  table.datatable th:first-child { text-align:left; border-radius:4px 0 0 0; }
+  table.datatable th:last-child { border-radius:0 4px 0 0; }
+  table.datatable td { padding:7px 8px; text-align:right; border-bottom:1px solid var(--line); }
+  table.datatable td:first-child { text-align:left; font-weight:500; color:var(--teal-dark); }
+  table.datatable tr.total td { background: rgba(237,120,52,.08); font-weight:700; border-top:2px solid var(--orange); }
+  .tablewrap { overflow-x:auto; }
+
+  .brandbar { height:5px; background: linear-gradient(90deg, var(--teal), var(--teal) 60%, var(--orange) 60%, var(--orange)); }
+
+  /* ---- Banner de ingresos totales proyectados ---- */
+  .totalbanner {
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:18px;
+  }
+  .totalbanner .tb-label {
+    font-size:12px; font-weight:600; letter-spacing:.4px; color:var(--gray-light); text-transform:uppercase; margin-bottom:8px;
+  }
+  .totalbanner .tb-big { font-size:clamp(26px,3.2vw,34px); font-weight:700; color:var(--teal-dark); }
+  .totalbanner .tb-big .tb-ins { color:var(--orange); }
+  .totalbanner .tb-years { display:flex; gap:26px; flex-wrap:wrap; }
+  .totalbanner .tb-years .tb-year { text-align:center; }
+  .totalbanner .tb-years .tb-year .tb-yearnum { font-size:19px; font-weight:700; color:var(--teal-dark); }
+  .totalbanner .tb-years .tb-year .tb-yearlbl { font-size:11.5px; color:var(--gray-light); margin-top:2px; }
+</style>
+</head>
+<body>
+<div class="brandbar"></div>
+<header class="top">
+  <img src="data:image/png;base64,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" alt="InterBroquer">
+  <div class="titlewrap">
+    <h1 class="maintitle">PROYECTO AUTOCONSA TALLERES</h1>
+    <p class="subtitle">Resumen ejecutivo — colocación de seguros VH en base de talleres</p>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- ===================== SECCIÓN 1 ===================== -->
+  <div class="sidebar">
+    <div class="card">
+      <div class="sectiontitle"><div class="bar"></div><h2>Aseguradora del modelo</h2></div>
+      <label class="fieldlabel" for="insurerSelect">Aseguradora</label>
+      <select id="insurerSelect">
+        <option value="MAPFRE" selected>MAPFRE</option>
+        <option value="ATLANTIDA">ATLANTIDA</option>
+      </select>
+
+      <div class="kpis">
+        <div class="kpi"><div class="num" id="kpiPctComision">—</div><div class="lbl">% de comisión IB</div></div>
+        <div class="kpi"><div class="num" id="kpiPctTasa">—</div><div class="lbl">% de tasa promedio ponderada</div></div>
+        <div class="kpi"><div class="num" id="kpiMonto">—</div><div class="lbl">Valor asegurado promedio</div></div>
+        <div class="kpi"><div class="num" id="kpiComisionVH">—</div><div class="lbl">Comisión / VH nuevo (100%)</div></div>
+        <div class="kpi wide">
+          <div class="numrow">
+            <div><div class="num" id="kpiPotenciales">—</div><div class="lbl">VH potenciales (sin seguro)</div></div>
+            <div><div class="num" id="kpiNuevos">—</div><div class="lbl">VH nuevos año 1</div></div>
+            <div><div class="num" id="kpiNuevosMes">—</div><div class="lbl">Pólizas nuevas / mes (año 1)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sectiontitle"><div class="bar"></div><h2>Premisas</h2></div>
+      <table class="premises" id="premisesTable"></table>
+    </div>
+  </div>
+
+  <!-- ===================== SECCIONES 2 y 3 ===================== -->
+  <div>
+    <div class="card">
+      <div class="totalbanner">
+        <div>
+          <div class="tb-label">Ingresos totales proyectados para Autoconsa</div>
+          <div class="tb-big"><span id="bannerTotal">—</span> · <span class="tb-ins" id="bannerInsurer">MAPFRE</span></div>
+        </div>
+        <div class="tb-years" id="bannerYears"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sectiontitle"><div class="bar"></div><h2>Número total de VH asegurados por año</h2></div>
+      <div class="tablewrap">
+        <table class="datatable" id="tablaVH">
+          <thead>
+            <tr><th>Ventas</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Año 4</th><th>Año 5</th></tr>
+          </thead>
+          <tbody id="tablaVHBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sectiontitle"><div class="bar"></div><h2>Total Ingresos Autoconsa</h2></div>
+      <div class="tablewrap">
+        <table class="datatable" id="tablaIngresosAutoconsa">
+          <thead>
+            <tr><th>Ingresos</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Año 4</th><th>Año 5</th></tr>
+          </thead>
+          <tbody id="tablaIngresosAutoconsaBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sectiontitle"><div class="bar"></div><h2>Total Ingresos InterBroquer</h2></div>
+      <div class="tablewrap">
+        <table class="datatable" id="tablaIngresosIB">
+          <thead>
+            <tr><th>Ingresos</th><th>Año 1</th><th>Año 2</th><th>Año 3</th><th>Año 4</th><th>Año 5</th></tr>
+          </thead>
+          <tbody id="tablaIngresosIBBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+const YEARS = [2026,2027,2028,2029,2030];
+
+const INSURER_NAMES = { MAPFRE: "MAPFRE", ATLANTIDA: "ATLANTIDA" };
+const INSURER_TASAS = { MAPFRE: 0.0366, ATLANTIDA: 0.0406 };
+
+const premiseDefs = [
+  { key:"vhTotal", label:"Total VH que maneja Autoconsa", default:650, suffix:"", step:"1" },
+  { key:"pctSinSeguro", label:"% de VH sin seguro (potenciales)", default:70, suffix:"%", step:"1" },
+  { key:"pctPenetracion", label:"% Penetración sobre potenciales (año 1)", default:35, suffix:"%", step:"1" },
+  { key:"crecimientoNuevos", label:"% Crecimiento de VH nuevos (año 2 en adelante)", default:5, suffix:"%", step:"1" },
+  { key:"pctRenovacion", label:"% Renovación anual de la cartera", default:70, suffix:"%", step:"1" },
+  { key:"tasa", label:"Tasa promedio ponderada (según aseguradora)", derived:true },
+  { key:"valorAsegurado", label:"Valor asegurado promedio ($)", default:24932, suffix:"", step:"1" },
+  { key:"comisionIB", label:"Comisión IB sobre prima neta", default:25, suffix:"%", step:"1" },
+  { key:"comisionConcesionario", label:"% comisión compartida con Autoconsa (negocio nuevo, todos los años)", default:60, suffix:"%", step:"1" },
+  { key:"depreciacion", label:"% Depreciación en cada renovación", default:10, suffix:"%", step:"1" },
+];
+
+function buildPremisesTable() {
+  const tbl = document.getElementById("premisesTable");
+  tbl.innerHTML = "";
+  premiseDefs.forEach(p => {
+    const tr = document.createElement("tr");
+    const tdL = document.createElement("td"); tdL.className="label"; tdL.textContent = p.label;
+    const tdV = document.createElement("td"); tdV.className="val";
+    if (p.derived) {
+      const span = document.createElement("span");
+      span.className = "derived"; span.id = "premise_" + p.key;
+      tdV.appendChild(span);
+    } else {
+      const inp = document.createElement("input");
+      inp.type = "number"; inp.id = "premise_" + p.key; inp.value = p.default; inp.step = p.step;
+      inp.addEventListener("input", recompute);
+      tdV.appendChild(inp);
+      const unit = document.createElement("span");
+      unit.className = "unit";
+      unit.textContent = p.suffix || "";
+      tdV.appendChild(unit);
+    }
+    tr.appendChild(tdL); tr.appendChild(tdV);
+    tbl.appendChild(tr);
+  });
+}
+
+function getPremises() {
+  const raw = k => parseFloat(document.getElementById("premise_"+k).value);
+  const insurer = document.getElementById("insurerSelect").value;
+  return {
+    insurer,
+    vhTotal: raw("vhTotal"),
+    pctSinSeguro: raw("pctSinSeguro")/100,
+    pctPenetracion: raw("pctPenetracion")/100,
+    crecimientoNuevos: raw("crecimientoNuevos")/100,
+    pctRenovacion: raw("pctRenovacion")/100,
+    tasa: INSURER_TASAS[insurer],
+    valorAsegurado: raw("valorAsegurado"),
+    comisionIB: raw("comisionIB")/100,
+    comisionConcesionario: raw("comisionConcesionario")/100,
+    depreciacion: raw("depreciacion")/100,
+  };
+}
+
+function fmtUSD(n) {
+  if (!isFinite(n)) return "—";
+  return "$" + n.toLocaleString("es-EC", {maximumFractionDigits:0});
+}
+function fmtInt(n) {
+  if (!isFinite(n)) return "—";
+  return Math.round(n).toLocaleString("es-EC");
+}
+function fmtPct(n, d) {
+  return (n*100).toFixed(d) + "%";
+}
+
+function computeModel() {
+  const prem = getPremises();
+  const N = YEARS.length;
+
+  const potenciales = prem.vhTotal * prem.pctSinSeguro;
+  const vhNuevosAno1 = Math.round(potenciales * prem.pctPenetracion);
+
+  // VH nuevos por año: año 1 = penetración; año 2 en adelante crece al % indicado
+  const nuevosPorAnio = {};
+  for (let year=1; year<=N; year++) {
+    nuevosPorAnio[year] = (year===1) ? vhNuevosAno1 : Math.round(nuevosPorAnio[year-1] * (1+prem.crecimientoNuevos));
+  }
+
+  // Cohortes: cada año de colocación (cy) tiene su propio grupo que renueva y se deprecia por separado
+  const cohort = {};
+  for (let cy=1; cy<=N; cy++) {
+    cohort[cy] = {};
+    for (let py=cy; py<=N; py++) {
+      if (py === cy) {
+        cohort[cy][py] = { units: nuevosPorAnio[cy], valor: prem.valorAsegurado };
+      } else {
+        const prev = cohort[cy][py-1];
+        cohort[cy][py] = { units: prev.units * prem.pctRenovacion, valor: prev.valor * (1-prem.depreciacion) };
+      }
+    }
+  }
+
+  const yearResults = {};
+  let totPrima=0, totComisionTotal=0, totComisionConces=0, totComisionNetaIB=0, totRetornoTaller=0;
+
+  for (let year=1; year<=N; year++) {
+    const vhNuevosYear = cohort[year][year].units;
+    let vhTotalYear = 0, primaNuevaYear = 0, primaRenovadaYear = 0;
+    for (let cy=1; cy<=year; cy++) {
+      const c = cohort[cy][year];
+      vhTotalYear += c.units;
+      const primaCohort = c.units * c.valor * prem.tasa;
+      if (cy === year) primaNuevaYear += primaCohort; else primaRenovadaYear += primaCohort;
+    }
+    const vhRenovadosYear = vhTotalYear - vhNuevosYear;
+    const primaNeta = primaNuevaYear + primaRenovadaYear;
+
+    const comisionTotalNueva = primaNuevaYear * prem.comisionIB;
+    const comisionTotalRenovada = primaRenovadaYear * prem.comisionIB;
+    // El 60% compartido con Autoconsa aplica sobre TODO negocio nuevo, en cualquier año.
+    // Las renovaciones quedan siempre 100% para InterBroquer.
+    const comisionConces = comisionTotalNueva * prem.comisionConcesionario;
+    const comisionIBnetaNueva = comisionTotalNueva * (1-prem.comisionConcesionario);
+    const comisionNetaIB = comisionIBnetaNueva + comisionTotalRenovada;
+    const comisionTotal = comisionTotalNueva + comisionTotalRenovada;
+    const retornoTaller = primaNeta;
+
+    totPrima += primaNeta;
+    totComisionTotal += comisionTotal;
+    totComisionConces += comisionConces;
+    totComisionNetaIB += comisionNetaIB;
+    totRetornoTaller += retornoTaller;
+
+    yearResults[YEARS[year-1]] = {
+      vh: vhTotalYear, vhNuevosYear, vhRenovadosYear,
+      primaNeta, comisionTotal, comisionConces, comisionNetaIB, retornoTaller,
+      comisionIBnetaNueva, comisionTotalRenovada
+    };
+  }
+
+  const comisionPromedioPorVH100 = prem.valorAsegurado * prem.tasa * prem.comisionIB;
+
+  return {
+    prem, potenciales, vhNuevos: vhNuevosAno1, yearResults,
+    totPrima, totComisionTotal, totComisionConces, totComisionNetaIB, totRetornoTaller,
+    comisionPromedioPorVH100
+  };
+}
+
+function renderKPIs(model) {
+  document.getElementById("premise_tasa").textContent = fmtPct(model.prem.tasa, 2);
+  document.getElementById("kpiPctComision").textContent = fmtPct(model.prem.comisionIB, 0);
+  document.getElementById("kpiPctTasa").textContent = fmtPct(model.prem.tasa, 2);
+  document.getElementById("kpiMonto").textContent = fmtUSD(model.prem.valorAsegurado);
+  document.getElementById("kpiComisionVH").textContent = fmtUSD(model.comisionPromedioPorVH100);
+  document.getElementById("kpiPotenciales").textContent = fmtInt(model.potenciales);
+  document.getElementById("kpiNuevos").textContent = fmtInt(model.vhNuevos);
+  document.getElementById("kpiNuevosMes").textContent = fmtInt(model.vhNuevos / 12);
+}
+
+function renderBanner(model) {
+  document.getElementById("bannerInsurer").textContent = INSURER_NAMES[model.prem.insurer];
+  const totAutoconsa = model.totComisionConces + model.totRetornoTaller;
+  document.getElementById("bannerTotal").textContent = fmtUSD(totAutoconsa);
+
+  const yearsDiv = document.getElementById("bannerYears");
+  yearsDiv.innerHTML = "";
+  YEARS.forEach((y, idx) => {
+    const r = model.yearResults[y];
+    const totYear = r.comisionConces + r.retornoTaller;
+    const div = document.createElement("div");
+    div.className = "tb-year";
+    div.innerHTML = `<div class="tb-yearnum">${fmtUSD(totYear)}</div><div class="tb-yearlbl">Año ${idx+1}</div>`;
+    yearsDiv.appendChild(div);
+  });
+}
+
+function rowMulti(label, getVal, fmt) {
+  return `<tr><td>${label}</td>` + YEARS.map(y => `<td>${fmt(getVal(y))}</td>`).join("") + `</tr>`;
+}
+
+function renderTablaVH(model) {
+  const body = document.getElementById("tablaVHBody");
+  const r = model.yearResults;
+  let html = "";
+  html += rowMulti("VH nuevos colocados", y => r[y].vhNuevosYear, v => v>0 ? fmtInt(v) : "—");
+  html += rowMulti("VH renovados", y => r[y].vhRenovadosYear, v => v>0 ? fmtInt(v) : "—");
+  html += `<tr class="total"><td>Total VH asegurados</td>` + YEARS.map(y => `<td>${fmtInt(r[y].vh)}</td>`).join("") + `</tr>`;
+  body.innerHTML = html;
+}
+
+function renderTablaIngresosAutoconsa(model) {
+  const body = document.getElementById("tablaIngresosAutoconsaBody");
+  const r = model.yearResults;
+  let html = "";
+  html += rowMulti("Comisión Autoconsa", y => r[y].comisionConces, v => v>0 ? fmtUSD(v) : "—");
+  html += rowMulti("Retorno a taller", y => r[y].retornoTaller, fmtUSD);
+  html += `<tr class="total"><td>Total ingresos Autoconsa</td>` + YEARS.map(y => `<td>${fmtUSD(r[y].comisionConces + r[y].retornoTaller)}</td>`).join("") + `</tr>`;
+  body.innerHTML = html;
+}
+
+function renderTablaIngresosIB(model) {
+  const body = document.getElementById("tablaIngresosIBBody");
+  const r = model.yearResults;
+  let html = "";
+  html += rowMulti("Comisión negocio nuevo (neta)", y => r[y].comisionIBnetaNueva, fmtUSD);
+  html += rowMulti("Comisión renovaciones (100% IB)", y => r[y].comisionTotalRenovada, v => v>0 ? fmtUSD(v) : "—");
+  html += `<tr class="total"><td>Total ingresos InterBroquer</td>` + YEARS.map(y => `<td>${fmtUSD(r[y].comisionNetaIB)}</td>`).join("") + `</tr>`;
+  body.innerHTML = html;
+}
+
+function recompute() {
+  const model = computeModel();
+  renderKPIs(model);
+  renderBanner(model);
+  renderTablaVH(model);
+  renderTablaIngresosAutoconsa(model);
+  renderTablaIngresosIB(model);
+}
+
+buildPremisesTable();
+document.getElementById("insurerSelect").addEventListener("change", recompute);
+recompute();
+</script>
+</body>
+</html>
